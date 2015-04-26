@@ -47,6 +47,9 @@ public:
     intvector ant_rate;
     intvector ant_angular_speed;
     intvector inst_angular_speed;
+    intvector inst_bat_rate;
+    intvector ant_bat_rate;
+    intvector sat_unit_recharge;
     
     intmatrix inst_sat_map;
     intmatrix ant_sat_map;
@@ -70,9 +73,10 @@ public:
         srand( time(  NULL ) );
         for(int i = 0 ; i < num_antenna_types; i ++ )
         {
-            ant_rate.push_back( get_rand_num( 20, 50 ) );
+            ant_rate.push_back( get_rand_num( 2, 5) );
+            ant_bat_rate.push_back(get_rand_num(2, 5));
             ant_angular_speed.push_back(get_rand_num(5,10));
-            ant_gs_map.push_back( intvector());
+            ant_gs_map.push_back(intvector());
             ant_sat_map.push_back(intvector());
             
             for(int j = 0; j < num_ground_statiion;  j++)
@@ -88,7 +92,8 @@ public:
         
         for(int i = 0 ; i < num_instrument_types; i ++ )
         {
-            inst_rate.push_back( get_rand_num( 30, 80 ) );
+            inst_rate.push_back( get_rand_num( 3, 8 ) );
+            inst_bat_rate.push_back( get_rand_num(3, 8));
             inst_angular_speed.push_back(get_rand_num(5,10));
             inst_sat_map.push_back( intvector());
             for(int j = 0; j < num_satellites;  j++)
@@ -99,6 +104,7 @@ public:
         
         for(int i = 0 ; i < num_satellites; i++)
         {
+            sat_unit_recharge.push_back( get_rand_num(2, 3));
             satellite_sun_visibility.push_back( std::vector<intpair>());
             int start = get_rand_num(0, 100);
             int length = get_rand_num(20, 30);
@@ -155,6 +161,11 @@ public:
         {
             writer << i << ":" << inst_rate[i] << std::endl;
         }
+        writer <<"Instrument Battery Consumption Rate : " << std::endl;
+        for(int i = 0 ; i < num_instrument_types; i ++ )
+        {
+            writer << i << ":" << inst_bat_rate[i] << std::endl;
+        }
         writer <<"Instrument Angular Speed : " << std::endl;
         for(int i = 0 ; i < num_instrument_types; i ++ )
         {
@@ -164,6 +175,11 @@ public:
         for(int i = 0 ; i < num_antenna_types; i ++ )
         {
             writer << i << ":" << ant_rate[i] << std::endl;
+        }
+        writer<<"Antenna Battery Consumption Rate : " << std::endl;
+        for(int i = 0 ; i < num_antenna_types; i ++ )
+        {
+            writer << i << ":" << ant_bat_rate[i] << std::endl;
         }
         writer<<"Antenna Angular Speed : " << std::endl;
         for(int i = 0 ; i < num_antenna_types; i ++ )
@@ -210,6 +226,11 @@ public:
             writer << std::endl;
         }
         
+        writer <<"Satellite Unit Recharge"<< std::endl;
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            writer << i <<":" << sat_unit_recharge[i] <<std::endl;
+        }
         writer <<"Satellite Sun Visibility"<< std::endl;
         for(int i = 0 ; i < num_satellites; i++)
         {
@@ -398,7 +419,7 @@ public:
 int main(int argc, char** argv)
 {
     //SatelliteProblemDomainGenerator(int n_sat, int n_inst_type, int n_ant_type, int n_gs, int n_tw )
-    /*
+    /**
      * @param n_sat : number of satellites
      * @param n_inst_type: types of unique instruments
      * @param n_ant_type: types of unique antennas

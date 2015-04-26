@@ -49,6 +49,9 @@ public:
     intvector ant_rate;
     intvector ant_angular_speed;
     intvector inst_angular_speed;
+    intvector inst_bat_rate;
+    intvector ant_bat_rate;
+    intvector sat_unit_recharge;
     
     intmatrix inst_sat_map;
     intmatrix ant_sat_map;
@@ -84,6 +87,20 @@ public:
         }
     }
     
+    void readInstrumentBatConRate(std::ifstream& reader)
+    {
+        for(int i = 0 ; i < num_instrument_types; i++)
+        {
+            std::string line;
+            std::vector<std::string> tokens;
+            std::getline(reader, line);
+            tokenize(line, tokens, std::string(":"));
+            assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
+            inst_bat_rate.push_back(atoi(tokens[1].c_str()));
+            
+        }
+    }
+    
     void readInstrumentAngularSpeed(std::ifstream& reader)
     {
         for(int i = 0 ; i < num_instrument_types; i++)
@@ -107,6 +124,20 @@ public:
             tokenize(line, tokens, std::string(":"));
             assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
             ant_rate.push_back(atoi(tokens[1].c_str()));
+            
+        }
+    }
+    
+    void readAntennaBatConRate(std::ifstream& reader)
+    {
+        for(int i = 0 ; i < num_antenna_types; i++)
+        {
+            std::string line;
+            std::vector<std::string> tokens;
+            std::getline(reader, line);
+            tokenize(line, tokens, std::string(":"));
+            assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
+            ant_bat_rate.push_back(atoi(tokens[1].c_str()));
             
         }
     }
@@ -195,6 +226,19 @@ public:
                     ant_gs_map[i].push_back(atoi(tokens[j].c_str()));
                 }
             }
+        }
+    }
+    void readSatelliteUnitRecharge(std::ifstream& reader)
+    {
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            std::string line;
+            std::vector<std::string> tokens;
+            std::getline(reader, line);
+            tokenize(line, tokens, std::string(":"));
+            assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
+            sat_unit_recharge.push_back(atoi(tokens[1].c_str()));
+            
         }
     }
     void readSatelliteSunVisibility(std::ifstream& reader)
@@ -411,6 +455,10 @@ public:
         std::getline(reader, line);
         readInstrumentRate(reader);
         
+        std::cout<<"readInstrumentBatConRate"<<std::endl;
+        std::getline(reader, line);
+        readInstrumentBatConRate(reader);
+        
         
         std::cout<<"readInstrumentAngularSpeed"<<std::endl;
         std::getline(reader, line);
@@ -420,6 +468,10 @@ public:
         std::cout<<"readAntennaRate"<<std::endl;
         std::getline(reader, line);
         readAntennaRate(reader);
+        
+        std::cout<<"readAntennaBatConRate"<<std::endl;
+        std::getline(reader, line);
+        readAntennaBatConRate(reader);
         
         std::cout<<"readAntennaAngularSpeed"<<std::endl;
         std::getline(reader, line);
@@ -435,11 +487,13 @@ public:
         std::getline(reader, line);
         readAntennaSatelliteMap(reader);
         
-        
         std::cout<<"readAntennaGroundStationMap"<<std::endl;
         std::getline(reader, line);
         readAntennaGroundStationMap(reader);
         
+        std::cout<<"readSatelliteRechargeRate"<<std::endl;
+        std::getline(reader, line);
+        readSatelliteUnitRecharge(reader);
         
         std::cout<<"readSatelliteSunVisibility"<<std::endl;
         std::getline(reader, line);
@@ -483,6 +537,35 @@ public:
         std::getline(reader, line);
         readObservationAngularDistance(reader);
         
+        for( int i = 0; i < num_satellites; i++)
+        {
+            std::cout <<"Satellite "<< i << " has following instruments" << std::endl;
+            
+            for( int s = 0 ; s < num_instrument_types; s++)
+            {
+                for( int j = 0 ; j < inst_sat_map[s].size(); j++)
+                {
+                    if( inst_sat_map[s][j] == i )
+                    {
+                        std::cout << "Instrument: " << s << std::endl;
+                    }
+                }
+            }
+            
+            std::cout <<"Satellite "<< i << " has following antennas" << std::endl;
+            
+            for( int s = 0 ; s < num_antenna_types; s++)
+            {
+                for( int j = 0 ; j < ant_sat_map[s].size(); j++)
+                {
+                    if( ant_sat_map[s][j] == i )
+                    {
+                        std::cout << "Antenna: " << s << std::endl;
+                    }
+                }
+            }
+            
+        }
     }
 };
     
