@@ -52,6 +52,8 @@ public:
     intvector inst_bat_rate;
     intvector ant_bat_rate;
     intvector sat_unit_recharge;
+    intvector sat_storage_total;
+    intvector sat_battery_total;
     
     intmatrix inst_sat_map;
     intmatrix ant_sat_map;
@@ -241,6 +243,36 @@ public:
             
         }
     }
+    
+    void readSatelliteStorage(std::ifstream& reader)
+    {
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            std::string line;
+            std::vector<std::string> tokens;
+            std::getline(reader, line);
+            tokenize(line, tokens, std::string(":"));
+            assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
+            sat_storage_total.push_back(atoi(tokens[1].c_str()));
+            
+        }
+    }
+    
+    void readSatelliteBattery(std::ifstream& reader)
+    {
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            std::string line;
+            std::vector<std::string> tokens;
+            std::getline(reader, line);
+            tokenize(line, tokens, std::string(":"));
+            assert(tokens.size() == 2 and atoi(tokens[0].c_str()) == i);
+            sat_battery_total.push_back(atoi(tokens[1].c_str()));
+            
+        }
+    }
+    
+    
     void readSatelliteSunVisibility(std::ifstream& reader)
     {
         for(int i = 0; i < num_satellites; i++)
@@ -494,6 +526,14 @@ public:
         std::cout<<"readSatelliteRechargeRate"<<std::endl;
         std::getline(reader, line);
         readSatelliteUnitRecharge(reader);
+        
+        std::cout<<"readSatelliteStorage"<<std::endl;
+        std::getline(reader, line);
+        readSatelliteStorage(reader);
+        
+        std::cout<<"readSatelliteBattery"<<std::endl;
+        std::getline(reader, line);
+        readSatelliteBattery(reader);
         
         std::cout<<"readSatelliteSunVisibility"<<std::endl;
         std::getline(reader, line);

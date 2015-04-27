@@ -50,11 +50,15 @@ public:
     intvector inst_bat_rate;
     intvector ant_bat_rate;
     intvector sat_unit_recharge;
+    intvector sat_storage_total;
+    intvector sat_battery_total;
     
     intmatrix inst_sat_map;
     intmatrix ant_sat_map;
     intmatrix ant_gs_map;
     intmatrix gs_angular_distance;
+    
+    
     
     std::vector< std::vector< std::vector< intpair > > > satellite_groundstation_visibility;
     intpairvectorvector satellite_sun_visibility;
@@ -89,7 +93,7 @@ public:
                 ant_sat_map[i].push_back( get_rand_num(0,1));
             }
         }
-        
+        srand( time(  NULL ) );
         for(int i = 0 ; i < num_instrument_types; i ++ )
         {
             inst_rate.push_back( get_rand_num( 3, 8 ) );
@@ -101,11 +105,13 @@ public:
                 inst_sat_map[i].push_back( get_rand_num(0,1));
             }
         }
-        
+        srand( time(  NULL ) );
         for(int i = 0 ; i < num_satellites; i++)
         {
             sat_unit_recharge.push_back( get_rand_num(2, 3));
             satellite_sun_visibility.push_back( std::vector<intpair>());
+            sat_storage_total.push_back(get_rand_num(150, 200));
+            sat_battery_total.push_back( get_rand_num(15, 20));
             int start = get_rand_num(0, 100);
             int length = get_rand_num(20, 30);
             for(int j = 0; j < num_timewindows; j++)
@@ -114,7 +120,7 @@ public:
                 start = start+length+40;
             }
         }
-        
+        srand( time(  NULL ) );
         for(int i = 0 ; i < num_satellites; i++)
         {
             satellite_groundstation_visibility.push_back( std::vector< std::vector<intpair> >());
@@ -130,7 +136,7 @@ public:
                 }
             }
         }
-        
+        srand( time(  NULL ) );
         for(int i = 0 ; i < num_ground_statiion; i++)
         {
             gs_angular_distance.push_back( intvector() );
@@ -231,6 +237,19 @@ public:
         {
             writer << i <<":" << sat_unit_recharge[i] <<std::endl;
         }
+        
+        writer <<"Satellite Storage"<< std::endl;
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            writer << i <<":" << sat_storage_total[i] <<std::endl;
+        }
+        
+        writer <<"Satellite Battery"<< std::endl;
+        for(int i = 0 ; i < num_satellites; i++)
+        {
+            writer << i <<":" << sat_battery_total[i] <<std::endl;
+        }
+        
         writer <<"Satellite Sun Visibility"<< std::endl;
         for(int i = 0 ; i < num_satellites; i++)
         {
@@ -302,7 +321,7 @@ public:
     ,num_observations(n_obs)
     ,domain(domain)
     {
-        //srand(time(NULL));
+        srand(time(NULL));
         //num_observations = get_rand_num()
         for(int j = 0 ; j < num_observations; j++)
         {
@@ -316,7 +335,7 @@ public:
             
             observation_size.push_back(get_rand_num(30, 50));
         }
-        
+        srand(time(NULL));
         for(int i = 0 ; i < num_observations ; i++)
         {
             observation_satellite_time_windows.push_back( std::vector< std::vector<intpair> >());
@@ -332,7 +351,7 @@ public:
                 }
             }
         }
-        
+        srand(time(NULL));
         for(int i = 0 ; i < num_observations; i++)
         {
             observations_angualr_distances.push_back( intvector() );
@@ -425,6 +444,8 @@ int main(int argc, char** argv)
      * @param n_ant_type: types of unique antennas
      * @param n_gs : number of gs
      * @param n_tw : number of time windows for visibility between satellite/observation/ground stations/sun light
+     * @param n_instance: number of instances that should be generated
+     * @param n_observation: number of observation in that instance
      */
     std::cout<< "argc " << argc << std::endl;
     
@@ -451,7 +472,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        std::cout <<"Usage ./satellite_gen num_sat num_instrument_type, num_antenna_type, num_ground_stations, num_timewindows num_instance num_observations" << std::endl;
+        std::cout <<"Usage ./satellite_gen num_sat, num_instrument_type, num_antenna_type, num_ground_stations, num_timewindows, num_instance, num_observations" << std::endl;
     }
     
     return 0;
