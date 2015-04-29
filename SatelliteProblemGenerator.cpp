@@ -108,10 +108,10 @@ public:
         srand( time(  NULL ) );
         for(int i = 0 ; i < num_satellites; i++)
         {
-            sat_unit_recharge.push_back( get_rand_num(2, 3));
+            sat_unit_recharge.push_back( get_rand_num(15, 20));
             satellite_sun_visibility.push_back( std::vector<intpair>());
             sat_storage_total.push_back(get_rand_num(150, 200));
-            sat_battery_total.push_back( get_rand_num(15, 20));
+            sat_battery_total.push_back( get_rand_num(350, 500));
             int start = get_rand_num(0, 100);
             int length = get_rand_num(20, 30);
             for(int j = 0; j < num_timewindows; j++)
